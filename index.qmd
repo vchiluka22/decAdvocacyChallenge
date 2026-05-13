@@ -11,6 +11,18 @@ format:
     number-sections: false
     embed-resources: true
     fig-cap-location: bottom
+    include-in-header:
+      text: |
+        <style>
+          /* Keep figures and wide tables inside the viewport (no horizontal scroll) */
+          main .quarto-figure,
+          main .cell-output-display figure,
+          main .cell-output-display .quarto-figure { max-width: 100%; margin-left: auto; margin-right: auto; }
+          main img { max-width: 100% !important; height: auto !important; }
+          main .table,
+          main .cell-output-display table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+          body { overflow-x: hidden; }
+        </style>
 execute:
   echo: false
   warning: false
@@ -24,11 +36,11 @@ import matplotlib.pyplot as plt
 from scipy import stats
 
 plt.rcParams.update({
-    "figure.figsize": (9, 5),
-    "figure.dpi": 120,
-    "font.size": 11,
-    "axes.titlesize": 13,
-    "axes.labelsize": 11,
+    "figure.figsize": (6.5, 3.8),
+    "figure.dpi": 100,
+    "font.size": 10,
+    "axes.titlesize": 11,
+    "axes.labelsize": 10,
     "axes.spines.top": False,
     "axes.spines.right": False,
 })
@@ -113,8 +125,10 @@ Your spreadsheet tracks **one row per shop per day**: 50 calendar days across th
 ```{python}
 #| label: fig-all-points
 #| fig-cap: "Each dot is one shop-day: cars fixed that day, by shop. Jitter spreads overlapping dots. Orange = you were there; blue = you were at another shop that day."
+#| fig-width: 6.5
+#| fig-height: 3.8
 
-fig, ax = plt.subplots(figsize=(10, 5.5))
+fig, ax = plt.subplots(figsize=(6.5, 3.8))
 jitter_x = RNG.normal(0, 0.08, size=len(carsDF))
 boss_off = carsDF["boss"] == 0
 boss_on = carsDF["boss"] == 1
@@ -189,8 +203,10 @@ lift_tbl
 ```{python}
 #| label: fig-lift-bar
 #| fig-cap: "Estimated extra cars per day when you work at that shop, compared with days you are elsewhere. Error bars show approximate 95% bootstrap ranges (see confidence section)."
+#| fig-width: 6.5
+#| fig-height: 3.8
 
-fig, ax = plt.subplots(figsize=(9, 4.8))
+fig, ax = plt.subplots(figsize=(6.5, 3.8))
 shops = list(range(1, 6))
 vals = [lifts[s] for s in shops]
 err_lo = [vals[i] - lift_ci[s][0] for i, s in enumerate(shops)]
@@ -224,16 +240,18 @@ scenario_df
 ```{python}
 #| label: fig-scenarios
 #| fig-cap: "Projected extra cars per year from your visits under three example schedules (220 visit days, lifts from the historical data)."
+#| fig-width: 6.5
+#| fig-height: 3.6
 
-fig, ax = plt.subplots(figsize=(9, 4.5))
+fig, ax = plt.subplots(figsize=(6.5, 3.6))
 names = list(scenarios.keys())
 extras = [scenario_incremental_cars(scenarios[n]) for n in names]
 x = np.arange(len(names))
 ax.bar(x, extras, color=[COL_PRESENT, "#2d6a4f", "#6c757d"], edgecolor="white")
 ax.set_xticks(x)
 ax.set_xticklabels(
-    ["Even\n20% each", "Revenue-focused\n(4, 2, 5)", "Family-first\n(half at Shop 3)"],
-    fontsize=10,
+    ["Even\n20% each", "Revenue\n(4,2,5)", "Family\n(½ at 3)"],
+    fontsize=9,
 )
 ax.set_ylabel("Estimated extra cars per year")
 ax.set_title("Three ways to spend the same number of visit-days")
